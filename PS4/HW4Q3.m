@@ -1,12 +1,14 @@
 %% Q3 
-% Work in progress. Each iteration takes a very long time and the value
-% function does not seem to converge
+% Work in progress. There is a problem with my cheb approximation. Using a
+% plonomial interpolation (and cheb nodes), the value function converges to
+% the same function as before ! 
 clear;clc;
 %% Step 1, discretizes the state space
+tic
 kss=50;
 kmin=10; 
 kmax=kss;
-n=200;
+n=199;
 %K=kmin:(kmax-kmin)/n:kmax; 
 %p=size(K,2);
 theta=0.679;
@@ -27,7 +29,7 @@ chevn=flip(chevn1);
 cb=(chevn+1)*((kmax-kmin)/2)+kmin;
 
 %%
-
+x=1:11;
 K=cb;
 p=size(K,2);
 V=zeros(p);
@@ -65,22 +67,16 @@ for i=1:p
 end
 
 %%
-d=3;
-thetas=ones(d+1,1);
+d=5;
+pp5=polyfit(K,V1,5);
 
-thetas(1)=sum(V1)/p;
-
-%%
-for j=1:d;
-
-thetas(j+1)=cheb(p, j, K, V1);
-
-end
+f=@(x) pp5(6)+pp5(5)*x+pp5(4)*x.^2+pp5(3)*x.^3+pp5(2)*x.^4+pp5(1)*x.^5;
 
 V=zeros(1,p);
 %%
+eps=0.1;
 s=1;
-while double(any(abs(V1-V(1,:))>eps)) > 0
+while double(any(abs(V1-V)>eps)) > 0
 
     V=V1;
     
@@ -97,7 +93,7 @@ end
 for i=1:p
     for j=1:p
         if m(i,j)>0
-            X(i,j)=log(m(i,j))+beta*(thetas(1)+thetas(2)*K(j)+thetas(3)*(2*K(j)^2-1)+thetas(4)*(4*K(j)^3-3*K(j)));
+            X(i,j)=log(m(i,j))+beta*(pp5(6)+pp5(5)*K(j)+pp5(4)*K(j)^2+pp5(3)*K(j)^3+pp5(2)*K(j)^4+pp5(1)*K(j)^5);
         else 
             X(i,j)=-1000;
         end
@@ -109,19 +105,18 @@ for i=1:p
 end
 
 
-d=3;
-thetas=ones(d+1,1);
-
-thetas(1)=sum(V1)/p;
+d=5;
+pp5=polyfit(K,V1,5);
 
 
-for j=1:d;
 
-thetas(j+1)=cheb(p, j, K, V1);
-
-end
 s=s+1;
-    if s==10
+
+    if s==1000
         break
     end
+
 end
+toc
+
+plot(K,V1)
