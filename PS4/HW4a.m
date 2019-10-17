@@ -20,11 +20,7 @@ V1=ones(1,p);
 s=0;               %counting the number of iterations
 %% Step 6 checking if fixed point is reached 
 
-while double(any(abs(V1-V(1,:))>eps)) > 0                           %any(abs(V1-V(1,:))>eps)
 
-    if s>0;
-        V=repmat(V1,p,1);
-    end
     
 % Step 3, Return matrix
 
@@ -47,7 +43,11 @@ for i=1:p
         end
     end
 end
-        
+while double(any(abs(V1-V(1,:))>eps)) > 0                           %any(abs(V1-V(1,:))>eps)
+
+    if s>0;
+        V=repmat(V1,p,1);
+    end        
 % Step 5 Matrix chi and updated value function 
 
 X=M+beta*V;

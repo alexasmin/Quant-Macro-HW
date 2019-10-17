@@ -60,11 +60,7 @@ s=s+1;
     
 %% Step 6     
     
-while double(any(abs(V1-V(1,:))>eps)) > 0                           
-    
-    if s>0;
-        V=repmat(V1,p,1);
-    end
+
     
 % Step 3, Return matrix
 
@@ -89,18 +85,24 @@ for i=1:p
 end
         
 % Step 5.1 Matrix chi and updated value function %%%%%%%%%%%%%%%
-
+while double(any(abs(V1-V(1,:))>eps)) > 0                           
+    
+    if s>0;
+        V=repmat(V1,p,1);
+    end
 
 %%
 gg=zeros(1,p);       %all the g,gg,ggg are to save the actual position of the max
 ggg=zeros(1,p);
 for i=1:p
     Xr=zeros(1,p-g(i)+1);     %to avoid calculating the whole X matrix, only
+    t=1;
     for j=g(i):p              %calculate for position gresater or equal then 
-    Xr(j)=M(i,j)+beta*V(i,j); %the policy function of last period tells you
+    Xr(t)=M(i,j)+beta*V(i,j); %the policy function of last period tells you
+    t=t+1;
     end
     [V1(i), gg(i)]=max(Xr);    %then maximize each row and safe
-    ggg(i)=p-size(Xr,2)+gg(i); %calculate the true position of the arg max
+    ggg(i)=g(i)-1+gg(i);; %calculate the true position of the arg max
 end
 
 g=ggg;

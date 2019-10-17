@@ -23,11 +23,7 @@ s=0;
 done=1;   %1 as long as one value is not close enough 
 %% Step 6 checking if fixed point is reached 
 
-while double(any(abs(V1-V(1,:))>eps)) > 0                           %any(abs(V1-V(1,:))>eps)
 
-    if s>0;
-        V=repmat(V1,p,1);
-    end
     
 % Step 3, Return matrix
 
@@ -52,6 +48,11 @@ for i=1:p
 end
         
 % Step 5.1 Matrix chi and updated value function 
+while double(any(abs(V1-V(1,:))>eps)) > 0                           %any(abs(V1-V(1,:))>eps)
+
+    if s>0;
+        V=repmat(V1,p,1);
+    end
 %%
 Xj=0;
 Xj1=0;
