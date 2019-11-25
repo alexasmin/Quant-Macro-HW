@@ -86,29 +86,29 @@ title('consumption policy');
 
 % -------------------------------------------------------------------------
 % SIMULATION
-ct = zeros(nt,1);
-xt = zeros(nt,1);
-at = zeros(nt,1);
-yt = zeros(nt,1);
-et = zeros(nt,1);
-eulert = zeros(nt,1);
+ct = zeros(T,1);
+xt = zeros(T,1);
+at = zeros(T,1);
+yt = zeros(T,1);
+et = zeros(T,1);
+eulert = zeros(T,1);
 
 % random numbers:
 rand('seed',0);
-probet=rand(nt,1);
+probet=rand(T,1);
 indet=ceil(probet*ne);
 
 outx = 0;
-for tc=1:nt,
+for tc=1:T,
     yt(tc) = epsi(indet(tc));
     xt(tc) = at(tc)+yt(tc);
-    ct(tc) = func_intp(gridx,cons,xt(tc));
+    ct(tc) = func_intp(gridx,cons(:,tc)',xt(tc));
     chkoutx=false;
-    if (ct(tc)==max(cons)),
+    if (ct(tc)==max(cons(:,tc))),
         outx=outx+1;
         chkoutx=true;
     end;
-    if (tc<nt),
+    if (tc<T),
         at(tc+1)=(xt(tc)-ct(tc))*(1+r)/(1+g);
     end;
     
@@ -118,41 +118,12 @@ for tc=1:nt,
         et(tc)=abs(foc(ct(tc),xt(tc))/margu);
     end;
 end;
-% -------------------------------------------------------------------------
-
-avget=mean(et);
-
-fracoutx=outx/nt;
-%if ( routx>0.01 ),
-%    beep; beep; beep;
-%    warning('grid too small, enlarge your grid');
-    disp(['fraction of points outside grid is ', num2str(fracoutx)]);
-%end;
-
-nnt=nt-dt+1;
-disp(['maximum Euler equation error is : ', num2str(max(et(dt+1:nt)))]);
-disp(['mean Euler equation error is : ', num2str(mean(et(dt+1:nt)))]);
-I = (et==0);
-rbc = sum(I(dt+1:nt))/nnt;
-disp(['borrowing constraint binds in ', num2str(rbc), ' cases']);
-
+%% -------------------------------------------------------------------------
 figure;
-plot([dt+1:nt],ct(dt+1:nt),'LineWidth',2);
+plot(ct);
 xlabel('time');
 ylabel('c_t');
 title('consumption over time');
-
-figure;
-plot([dt+1:nt],xt(dt+1:nt),'LineWidth',2);
-xlabel('time');
-ylabel('x_t');
-title('cash-on-hand over time');
-
-figure;
-plot([dt+1:nt],et(dt+1:nt),'LineWidth',2);
-xlabel('time');
-ylabel('e_t');
-title('euler error over time');
 
 
 
