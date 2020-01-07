@@ -3,6 +3,10 @@
 tetta=2;
 rho = 0.04;
 betta = 1/(1+rho);
+Beta=0;
+for i=1:80
+    Beta=Beta+betta^(i)
+end
 
  V1=load('vrep06t1finalcon.txt','-ascii');
  V0=load('vrep0t1finalcon.txt','-ascii');
@@ -28,6 +32,10 @@ v0_intp=[v0L_intp; v0H_intp];
 %%
 %g=(V1./v0_intp).^(1/(1-tetta))-1;
 
-g=exp((V1-v0_intp)./betta)-1;
+g=exp((V1-v0_intp)./Beta)-1;
 %%
-plot(X1(2,1:20),g(2,1:20))
+plot(X1(2,:),g(2,:))
+
+save glogfinal.txt g -ascii -double 
+
+
